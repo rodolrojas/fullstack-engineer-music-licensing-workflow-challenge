@@ -1,0 +1,521 @@
+{
+  "info": {
+    "name": "Music Licensing Workflow API",
+    "description": "Postman collection that exercises the Music Licensing Workflow backend API with runnable examples and tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "movieId",
+      "value": ""
+    },
+    {
+      "key": "sceneId",
+      "value": ""
+    },
+    {
+      "key": "songId",
+      "value": ""
+    },
+    {
+      "key": "trackId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Movies",
+      "item": [
+        {
+          "name": "Create movie",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Epic Adventure\",\n  \"description\": \"A thrilling journey across distant lands\",\n  \"releaseYear\": 2024\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/movies"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('Response includes movie id', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.have.property('id');",
+                  "  pm.collectionVariables.set('movieId', responseBodyJson.id);",
+                  "});",
+                  "pm.test('Response includes title', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.have.property('title');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List movies",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/movies"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get movie by id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/movies/{{movieId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response id matches movieId', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson.id).to.eql(pm.collectionVariables.get('movieId'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update movie",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"The Epic Adventure (Updated)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/movies/{{movieId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Movie title was updated', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson.title).to.eql('The Epic Adventure (Updated)');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Scenes",
+      "item": [
+        {
+          "name": "Create scene",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Opening Scene\",\n  \"description\": \"Hero introduction in a quiet village\",\n  \"sceneNumber\": 1,\n  \"movieId\": \"{{movieId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/scenes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('Response includes scene id', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.have.property('id');",
+                  "  pm.collectionVariables.set('sceneId', responseBodyJson.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List scenes by movie",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/scenes?movieId={{movieId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Songs",
+      "item": [
+        {
+          "name": "Create song",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Peaceful Morning\",\n  \"artist\": \"John Williams\",\n  \"album\": \"Epic Soundtracks Vol 1\",\n  \"durationSeconds\": 180,\n  \"rightsHolder\": \"Universal Music Publishing\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/songs"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('Response includes song id', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.have.property('id');",
+                  "  pm.collectionVariables.set('songId', responseBodyJson.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List songs",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/songs"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tracks",
+      "item": [
+        {
+          "name": "Create track",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Village Ambience\",\n  \"startTime\": 5.0,\n  \"endTime\": 45.5,\n  \"sceneId\": \"{{sceneId}}\",\n  \"songId\": \"{{songId}}\",\n  \"notes\": \"Fade in slowly at the beginning\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/tracks"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 or 200', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('Response includes track id', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.have.property('id');",
+                  "  pm.collectionVariables.set('trackId', responseBodyJson.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List tracks by movie",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/tracks?movieId={{movieId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update track",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"notes\": \"Fade in slowly at the beginning (updated)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/tracks/{{trackId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Track notes were updated', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson.notes).to.eql('Fade in slowly at the beginning (updated)');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update licensing status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"licensingStatus\": \"in_negotiation\",\n  \"notes\": \"Contacted rights holder, awaiting response\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/tracks/{{trackId}}/licensing-status"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Licensing status updated', function () {",
+                  "  const responseBodyJson = pm.response.json();",
+                  "  pm.expect(responseBodyJson.licensingStatus).to.eql('in_negotiation');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "item": [
+        {
+          "name": "Delete track",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/tracks/{{trackId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete song",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/songs/{{songId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete scene",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/scenes/{{sceneId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete movie",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/movies/{{movieId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
